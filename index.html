@@ -9,9 +9,9 @@
             height: 450px;
         }
 
-        svg {
-            display: none;
-        }
+        /*svg {*/
+        /*display: none;*/
+        /*}*/
     </style>
     <script
             src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -20,30 +20,40 @@
 </head>
 <body>
 <h1>test electron</h1>
-<textarea name="textarea" title="textarea">
-    </textarea>
+<textarea name="textarea" title="textarea"></textarea>
 
 <button id="go">Погнали блэд!!</button>
-    <div class="svg-conteiner"></div>
+<div class="svg-conteiner"></div>
 </body>
 
 <script src="jquery.js"></script>
 <script>
-    let id;
-
     $('#go').on('click', function () {
         $('.svg-conteiner').append($('textarea').val());
 
-        $("path").each(function (indx, element) {
-            id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
-            $(element).attr("id", id);
-            $(element).attr("mask", "url(#" + id + ")");
+
+        $('svg mask').each((index, elem)=>{
+            let initialId =  $(elem).attr("id");
+            let id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+            $(elem).attr("id", id);
+            $('svg path').each((index, elem)=>{
+                if( $(elem).attr("id") && $(elem).attr("id") === initialId) {
+                    $(elem).attr("id", id);
+                }
+                if( $(elem).attr("mask") && $(elem).attr("mask") === `url(#${initialId})`) {
+                    $(elem).attr("mask", "url(#" + id + ")");
+                }
+            });
+            $('svg use').each((index, elem)=>{
+                if($(elem).attr("xlink:href") && $(elem).attr("xlink:href")===`#${initialId}`) {
+                    $(elem).attr("xlink:href", "#" + id);
+                }
+            })
         });
+
         $('textarea').val($('.svg-conteiner').html());
-        $('svg').remove();
+        $('.svg-conteiner').html();
     });
 
-
-    $('textarea')
 </script>
 </html>
